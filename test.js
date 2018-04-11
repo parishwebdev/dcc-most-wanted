@@ -8,6 +8,8 @@ function app(people){
   switch(searchType){
     case 'yes':
     // TODO: search by name
+    let name = searchByName();
+    getName(name);
     break;
     case 'no':
     searchByTraits(people);
@@ -153,7 +155,7 @@ function getName(name,dataArray){
     }
 
   });
-
+  return nameResultArray;
 }
 
 
