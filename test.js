@@ -92,18 +92,6 @@ function searchByTraits(people,input) {
   let inputValues = splitByDelimiter(input);
   let criteriaToMeet = inputValues.length;
   let conditionsMetCounter = 0;
-
-//just keeping for now for testing purposes, will get rid of later
- /* let ageArray = people.map(function (el) {
-      return dateDiff(el.dob);
-  });
- for (let i = 0; i < people.length; i++) {
-     people[i]["Age"] = ageArray[i];
-      
- }
-console.log(people);
- */
-
   let newArray = people.filter(function (el) {
     if(inputValues.includes(numberToString(el.height))) {
       conditionsMetCounter++;
@@ -148,7 +136,7 @@ function mainMenu(person, people){
 
   switch(displayOption){
     case "info":
-    // TODO: get person's info
+    displayPerson(person);
     break;
     case "family":
     // TODO: get person's family
@@ -183,13 +171,19 @@ function displayPeople(people){
   }).join("\n"));
 }
 
-function displayPerson(person){
+function displayPerson(person, people){
   // print all of the information about a person:
   // height, weight, age, name, occupation, eye color.
   var personInfo = "First Name: " + person.firstName + "\n";
   personInfo += "Last Name: " + person.lastName + "\n";
-  // TODO: finish getting the rest of the information to display
+  personInfo += "Gender: " + person.gender + "\n";
+  personInfo += "Age: " + dateDiff(person.dob) + "\n";
+  personInfo += "Height: " + person.height + "\n";
+  personInfo += "Weight: " + person.weight + "\n";
+  personInfo += "Occupation: " + person.occupation + "\n";
+  personInfo += "Eye Color: " + person.eyeColor + "\n";
   alert(personInfo);
+  mainMenu(person, people);
 }
 
 // function that prompts and validates user input
