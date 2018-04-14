@@ -8,11 +8,10 @@ function app(people){
   switch(searchType){
     case 'yes':
     // TODO: search by name
-    let name = searchByName();
-    getName(name);
+    searchByName(people);
     break;
     case 'no':
-    searchByTraits(people);
+    getTraits(people);
     break;
     default:
     alert("Wrong! Please try again, following the instructions dummy. :)");
@@ -21,38 +20,112 @@ function app(people){
   }
 }
 
-function searchByTraits(people) {
-  let userSearchChoice = prompt("What would you like to search by? 'height', 'weight', 'eye color', 'gender', 'age', 'occupation'.");
-  let filteredPeople;
+function getTraits(people) {
+  let userSearchChoice = prompt("Search by the following: height, weight, eye color, gender, age, occupation.");
+  let filteredPeople = searchByTraits(people,userSearchChoice);
 
-  switch(userSearchChoice) {
-    case "height":
-      filteredPeople = searchByHeight(people);
-      break;
-    case "weight":
-      filteredPeople = searchByWeight(people);
-      break;
-    // so on and so forth
-    default:
-      alert("You entered an invalid search type! Please try again.");
-      searchByTraits(people);
-      break;
-  }  
-
-  let foundPerson = filteredPeople[0];
+  
+  let userSelection = selectPeople(filteredPeople);
+  let validUserInput = validateInput(userSelection,filteredPeople);
+  let foundPerson = filteredPeople[validUserInput - 1];
 
   mainMenu(foundPerson, people);
 
 }
 
-function searchByWeight(people) {
-  let userInputWeight = prompt("How much does the person weigh?");
+function selectPeople(peopleTrain){
+  let output  = "Please select a person (by number): \n";
+  for(let i = 0; i < peopleTrain.length; i++){
+    output += i+1 + " " + peopleTrain[i].firstName + " " + peopleTrain[i].lastName + '\n';
+  }
+
+    let result = prompt(output);
+    return result;
+}
+function validateInput(input,dataArray){
+
+    let num = parseInt(input);
+    if(Number.isInteger(num) && num <= dataArray.length){
+      return num;
+    } else{
+      selectPeople(dataArray);
+    }
+
+  }
+
+
+function numberToString(number){
+    if (!isNaN(number)){
+      let result = number.toString();
+      return result;
+    }
+    else{
+      return false;
+    }
+}
+
+function splitByDelimiter(input){
+  let arrayResult = input.split(" ");
+  return arrayResult;
+}
+
+function getCurrentYear() {
+  let today = new Date();
+  return today.getFullYear();
+}
+
+function getUserDate(input){
+    let bDay = new Date(input);
+    return bDay.getFullYear();
+}
+
+function dateDiff(dateinput){
+  let ageResult = getCurrentYear() - getUserDate(dateinput);
+  return numberToString(ageResult);
+}
+
+
+function searchByTraits(people,input) {
+  let inputValues = splitByDelimiter(input);
+  let criteriaToMeet = inputValues.length;
+  let conditionsMetCounter = 0;
+
+//just keeping for now for testing purposes, will get rid of later
+ /* let ageArray = people.map(function (el) {
+      return dateDiff(el.dob);
+  });
+ for (let i = 0; i < people.length; i++) {
+     people[i]["Age"] = ageArray[i];
+      
+ }
+console.log(people);
+ */
 
   let newArray = people.filter(function (el) {
-    if(el.weight == userInputWeight) {
-      return true;
+    if(inputValues.includes(numberToString(el.height))) {
+      conditionsMetCounter++;
     }
-    // return true if el.height matches userInputHeight
+    if(inputValues.includes(numberToString(el.weight)))  {
+      conditionsMetCounter++;
+    }
+    if(inputValues.includes(el.eyeColor)) {
+      conditionsMetCounter++;
+    }
+    if(inputValues.includes(el.gender)) {
+      conditionsMetCounter++;
+    }
+    if(inputValues.includes(dateDiff(el.dob))) {
+      conditionsMetCounter++;
+    }
+    if(inputValues.includes(el.occupation)) {
+      conditionsMetCounter++;
+    }
+
+    if (conditionsMetCounter === criteriaToMeet){
+      conditionsMetCounter = 0;
+      return el;
+    }
+    conditionsMetCounter = 0;
   });
 
   return newArray;
@@ -91,11 +164,12 @@ function mainMenu(person, people){
 }
 
 function searchByName(people){
-  var firstName = promptFor("What is the person's first name?", chars);
-  var lastName = promptFor("What is the person's last name?", chars);
+  let firstName = promptFor("What is the person's first name?", chars);
+  let lastName = promptFor("What is the person's last name?", chars);
 
   // TODO: find the person using the name they entered
-
+  let result = getName(stringSanitizer(firstName),stringSanitizer(lastName),people);
+  console.log(result);
 }
 
 // alerts a list of people
@@ -132,22 +206,22 @@ function chars(input){
   return true; // default validation only
 }
 
+function stringSanitizer(input){
+  let result = input.toString().toLowerCase();
+  return result;
+}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Our Code v
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-//Come back to later to generalize
-function getName(name,dataArray){
+function getName(value1,value2,dataArray){
   let nameResultArray = [];
 
-  nameResultArray = dataArray.filter(function(name){
+  nameResultArray = dataArray.filter(function(el){
     
-    if(name === dataArray.firstName){
-      return true;
-    }
-    else if(name === dataArray.lastName){
+    if((stringSanitizer(el.firstName) === value1) && (stringSanitizer(el.lastName) === value2)){
       return true;
     }
     else{
