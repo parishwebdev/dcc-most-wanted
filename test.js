@@ -25,7 +25,7 @@ function getTraits(people) {
   let filteredPeople = searchByTraits(people,userSearchChoice);
 
   
-  let userSelection = selectPeople(filteredPeople);
+  let userSelection = selectPeople2(filteredPeople);
   let validUserInput = validateInput(userSelection,filteredPeople);
   let foundPerson = filteredPeople[validUserInput - 1];
 
@@ -42,6 +42,17 @@ function selectPeople(peopleTrain){
     let result = prompt(output);
     return result;
 }
+
+
+function selectPeople2(peopleTrain){
+  let output = peopleTrain.map(function(person, idx){
+    return idx + 1 + ": " + person.firstName + " " + person.lastName;
+  }).join("\n");
+
+  let result = prompt(output);
+  return result;
+}
+
 function validateInput(input,dataArray){
 
     let num = parseInt(input);
@@ -52,8 +63,6 @@ function validateInput(input,dataArray){
     }
 
   }
-
-
 function numberToString(number){
     if (!isNaN(number)){
       let result = number.toString();
@@ -63,28 +72,22 @@ function numberToString(number){
       return false;
     }
 }
-
 function splitByDelimiter(input){
   let arrayResult = input.split(" ");
   return arrayResult;
 }
-
 function getCurrentYear() {
   let today = new Date();
   return today.getFullYear();
 }
-
 function getUserDate(input){
     let bDay = new Date(input);
     return bDay.getFullYear();
 }
-
 function dateDiff(dateinput){
   let ageResult = getCurrentYear() - getUserDate(dateinput);
   return numberToString(ageResult);
 }
-
-
 function searchByTraits(people,input) {
   let inputValues = splitByDelimiter(input);
   let criteriaToMeet = inputValues.length;
@@ -169,7 +172,8 @@ function searchByName(people){
 
   // TODO: find the person using the name they entered
   let result = getName(stringSanitizer(firstName),stringSanitizer(lastName),people);
-  console.log(result);
+  let foundPerson = result[0];
+  mainMenu(foundPerson,people);
 }
 
 // alerts a list of people
