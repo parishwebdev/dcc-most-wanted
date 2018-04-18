@@ -19,50 +19,37 @@ function app(people){
     break;
   }
 }
-
 function getTraits(people) {
   let userSearchChoice = prompt("Search by the following: height, weight, eye color, gender, age, occupation.");
   let filteredPeople = searchByTraits(people,userSearchChoice);
-
-  
   let userSelection = selectPeople2(filteredPeople);
   let validUserInput = validateInput(userSelection,filteredPeople);
   let foundPerson = filteredPeople[validUserInput - 1];
-
   mainMenu(foundPerson, people);
-
 }
-
 function selectPeople(peopleTrain){
   let output  = "Please select a person (by number): \n";
   for(let i = 0; i < peopleTrain.length; i++){
     output += i+1 + " " + peopleTrain[i].firstName + " " + peopleTrain[i].lastName + '\n';
   }
-
     let result = prompt(output);
     return result;
 }
-
-
 function selectPeople2(peopleTrain){
   let output = peopleTrain.map(function(person, idx){
     return idx + 1 + ": " + person.firstName + " " + person.lastName;
   }).join("\n");
-
   let result = prompt(output);
   return result;
 }
-
 function validateInput(input,dataArray){
-
     let num = parseInt(input);
     if(Number.isInteger(num) && num <= dataArray.length){
       return num;
     } else{
       selectPeople(dataArray);
     }
-
-  }
+}
 function numberToString(number){
     if (!isNaN(number)){
       let result = number.toString();
@@ -118,10 +105,8 @@ function searchByTraits(people,input) {
     }
     conditionsMetCounter = 0;
   });
-
   return newArray;
 }
-
 // Menu function to call once you find who you are looking for
 function mainMenu(person, people){
 
@@ -131,8 +116,7 @@ function mainMenu(person, people){
     alert("Could not find that individual.");
     return app(people); // restart
   }
-
-  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
+  let displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
 
   switch(displayOption){
     case "info":
@@ -153,24 +137,19 @@ function mainMenu(person, people){
     return mainMenu(person, people); // ask again
   }
 }
-
 function searchByName(people){
   let firstName = promptFor("What is the person's first name?", chars);
   let lastName = promptFor("What is the person's last name?", chars);
-
-  // TODO: find the person using the name they entered
   let result = getName(stringSanitizer(firstName),stringSanitizer(lastName),people);
   let foundPerson = result[0];
   mainMenu(foundPerson,people);
 }
-
 // alerts a list of people
 function displayPeople(people){
   alert(people.map(function(person){
     return person.firstName + " " + person.lastName;
   }).join("\n"));
 }
-
 function displayPerson(person, people){
   // print all of the information about a person:
   // height, weight, age, name, occupation, eye color.
@@ -185,7 +164,6 @@ function displayPerson(person, people){
   alert(personInfo);
   mainMenu(person, people);
 }
-
 // function that prompts and validates user input
 function promptFor(question, valid){
   do{
@@ -193,22 +171,18 @@ function promptFor(question, valid){
   } while(!response || !valid(response));
   return response;
 }
-
 // helper function to pass into promptFor to validate yes/no answers
 function yesNo(input){
   return input.toLowerCase() == "yes" || input.toLowerCase() == "no";
 }
-
 // helper function to pass in as default promptFor validation
 function chars(input){
   return true; // default validation only
 }
-
 function stringSanitizer(input){
   let result = input.toString().toLowerCase();
   return result;
 }
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Our Code v
@@ -216,20 +190,16 @@ Our Code v
 */
 function getName(value1,value2,dataArray){
   let nameResultArray = [];
-
   nameResultArray = dataArray.filter(function(el){
-    
     if((stringSanitizer(el.firstName) === value1) && (stringSanitizer(el.lastName) === value2)){
       return true;
     }
     else{
       return false;
     }
-
   });
   return nameResultArray;
 }
-
 function getSpouse (person, dataArray) {
 	let spouse = [];
 	for(i = 0; i < dataArray.length; i++) {
@@ -271,7 +241,6 @@ function getParents (person, dataArray, familyTrain) {
 		}
 	} return familyTrain;		
 }
-
 function getFamily(person, dataArray) {
 	let spouseArray = getSpouse(person, dataArray);
 	let siblingAndSpouse = getSiblings(person, dataArray, spouseArray);
@@ -279,13 +248,11 @@ function getFamily(person, dataArray) {
 	let familyArray = getParents(person, dataArray, sibSpouseChildren);
 	return familyArray;
 }
-
 function displayFamily(person, dataArray) {
 	let familyArray = getFamily(person, dataArray);
 	displayPeople(familyArray);
 	mainMenu(person, dataArray);
 }
-
 function getDescendants (person, dataArray, descendantTrain = [0]) {
 	let counter = descendantTrain[0];
 	descendantTrain.shift();
@@ -305,9 +272,12 @@ function getDescendants (person, dataArray, descendantTrain = [0]) {
 	return getDescendants(descendantTrain[counter], dataArray, descendantTrain);
 	return descendantTrain;
 }
-
 function displayDescendants (person, dataArray) {
-	let descendantArray = getDescendants(person, dataArray)
+	let descendantArray = getDescendants(person, dataArray);
+	if(descendantArray.length === 0) {
+		alert("This person has no descendants");
+	} else {
 	displayPeople(descendantArray);
+	}
 	mainMenu(person, dataArray);
 }
