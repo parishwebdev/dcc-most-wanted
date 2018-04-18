@@ -7,7 +7,6 @@ function app(people){
   var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
   switch(searchType){
     case 'yes':
-    // TODO: search by name
     searchByName(people);
     break;
     case 'no':
@@ -22,32 +21,31 @@ function app(people){
 function getTraits(people) {
   let userSearchChoice = prompt("Search by the following: height, weight, eye color, gender, age, occupation.");
   let filteredPeople = searchByTraits(people,userSearchChoice);
-  let userSelection = selectPeople2(filteredPeople);
-  let validUserInput = validateInput(userSelection,filteredPeople);
-  let foundPerson = filteredPeople[validUserInput - 1];
+  let userSelection = selectPeople2(filteredPeople,validateInput);
+
+  let foundPerson = filteredPeople[userSelection - 1];
   mainMenu(foundPerson, people);
 }
-function selectPeople(peopleTrain){
-  let output  = "Please select a person (by number): \n";
-  for(let i = 0; i < peopleTrain.length; i++){
-    output += i+1 + " " + peopleTrain[i].firstName + " " + peopleTrain[i].lastName + '\n';
-  }
-    let result = prompt(output);
-    return result;
-}
-function selectPeople2(peopleTrain){
+
+function selectPeople2(peopleTrain,validator){
   let output = peopleTrain.map(function(person, idx){
     return idx + 1 + ": " + person.firstName + " " + person.lastName;
   }).join("\n");
+
   let result = prompt(output);
-  return result;
+  if(validator(result,peopleTrain)){
+     return result;
+  }
+  return selectPeople2(peopleTrain,validator);
+ 
 }
 function validateInput(input,dataArray){
     let num = parseInt(input);
     if(Number.isInteger(num) && num <= dataArray.length){
       return num;
     } else{
-      selectPeople(dataArray);
+      alert("Please enter a number");
+      return false;
     }
 }
 function numberToString(number){
@@ -98,7 +96,6 @@ function searchByTraits(people,input) {
     if(inputValues.includes(el.occupation)) {
       conditionsMetCounter++;
     }
-
     if (conditionsMetCounter === criteriaToMeet){
       conditionsMetCounter = 0;
       return el;
@@ -183,11 +180,7 @@ function stringSanitizer(input){
   let result = input.toString().toLowerCase();
   return result;
 }
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Our Code v
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+
 function getName(value1,value2,dataArray){
   let nameResultArray = [];
   nameResultArray = dataArray.filter(function(el){
