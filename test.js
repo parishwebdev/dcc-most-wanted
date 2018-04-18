@@ -142,7 +142,7 @@ function mainMenu(person, people){
     displayFamily(person, people);
     break;
     case "descendants":
-    // TODO: get person's descendants
+    displayDescendants(person, people);
     break;
     case "restart":
     app(people); // restart
@@ -279,8 +279,35 @@ function getFamily(person, dataArray) {
 	let familyArray = getParents(person, dataArray, sibSpouseChildren);
 	return familyArray;
 }
+
 function displayFamily(person, dataArray) {
 	let familyArray = getFamily(person, dataArray);
 	displayPeople(familyArray);
+	mainMenu(person, dataArray);
 }
 
+function getDescendants (person, dataArray, descendantTrain = [0]) {
+	let counter = descendantTrain[0];
+	descendantTrain.shift();
+	if(counter > descendantTrain.length) {
+		return descendantTrain;
+	}
+	for(let i = 0; i < dataArray.length; i++) {
+		for(let j = 0; j < (dataArray[i].parents).length; j++) {
+			if(person.id === dataArray[i].parents[j]) {
+				descendantTrain.push(dataArray[i]);
+				break;
+			}
+		}
+	} 
+	counter++;
+	descendantTrain.unshift(counter);
+	return getDescendants(descendantTrain[counter], dataArray, descendantTrain);
+	return descendantTrain;
+}
+
+function displayDescendants (person, dataArray) {
+	let descendantArray = getDescendants(person, dataArray)
+	displayPeople(descendantArray);
+	mainMenu(person, dataArray);
+}
