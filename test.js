@@ -139,7 +139,7 @@ function mainMenu(person, people){
     displayPerson(person);
     break;
     case "family":
-    // TODO: get person's family
+    displayFamily(person, people);
     break;
     case "descendants":
     // TODO: get person's descendants
@@ -230,5 +230,57 @@ function getName(value1,value2,dataArray){
   return nameResultArray;
 }
 
+function getSpouse (person, dataArray) {
+	let spouse = [];
+	for(i = 0; i < dataArray.length; i++) {
+		if(person.currentSpouse === dataArray[i].id) {
+			spouse.push(dataArray[i]);
+		}
+	} return spouse;
+}
+function getSiblings(person, dataArray, familyTrain) {
+	for(let i=0; i < dataArray.length; i++) {
+		for(let j = 0; j < (dataArray[i].parents).length; j++) {
+			if(person === dataArray[i]) {
+				break;
+			}
+			if(person.parents[j] === dataArray[i].parents[j]) {
+			    familyTrain.push(dataArray[i]);
+				break;
+			}
+		}
+	} return familyTrain;
+}
+function getChildren (person, dataArray, familyTrain) {
+	for(let i = 0; i < dataArray.length; i++) {
+		for(let j = 0; j < (dataArray[i].parents).length; j++) {
+			if(person.id === dataArray[i].parents[j]) {
+				familyTrain.push(dataArray[i]);
+				break;
+			}
+		}
+	} return familyTrain;		
+}
+function getParents (person, dataArray, familyTrain) {
+	for(let i = 0; i < dataArray.length; i++) {
+		for(let j = 0; j < (person.parents).length; j++) {
+			if(dataArray[i].id === person.parents[j]) {
+				familyTrain.push(dataArray[i]);
+				break;
+			}
+		}
+	} return familyTrain;		
+}
 
+function getFamily(person, dataArray) {
+	let spouseArray = getSpouse(person, dataArray);
+	let siblingAndSpouse = getSiblings(person, dataArray, spouseArray);
+	let sibSpouseChildren =getChildren(person, dataArray, siblingAndSpouse);
+	let familyArray = getParents(person, dataArray, sibSpouseChildren);
+	return familyArray;
+}
+function displayFamily(person, dataArray) {
+	let familyArray = getFamily(person, dataArray);
+	displayPeople(familyArray);
+}
 
